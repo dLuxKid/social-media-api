@@ -12,6 +12,8 @@ import express, {
   type Response,
 } from "express";
 import router from "./router";
+import globalErrorController from "./utils/error-handlers/error-controller";
+import AppError from "./utils/error-handlers/app-error";
 
 const app: Application = express();
 
@@ -40,5 +42,9 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Hello from the server side");
 });
 app.use("/", router());
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server`, 500));
+});
+app.use(globalErrorController);
 
 export default app;

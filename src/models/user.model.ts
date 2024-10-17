@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import validator from "validator";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import mongoose from "mongoose";
+import validator from "validator";
 
 const userSchema = new mongoose.Schema(
   {
@@ -70,11 +70,6 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 
-userSchema.methods.isCorrectPassword = async (
-  candidatePassword: string,
-  userPassword: string
-) => await bcrypt.compare(candidatePassword, userPassword);
-
 userSchema.methods.hasChangedPasswordAfter = function (jwt_timestamp: number) {
   if (this.password_changed_at) {
     const changedTimestamp =
@@ -98,5 +93,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
   return resetToken;
 };
+
+export type UserType = mongoose.InferSchemaType<typeof userSchema>;
 
 export default mongoose.model("Users", userSchema);

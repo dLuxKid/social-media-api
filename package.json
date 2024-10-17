@@ -3,7 +3,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch ./src/server.ts"
+    "dev": "NODE_ENV=development bun --watch ./src/server.ts",
+    "start": "NODE_ENV=production bun ./src/server.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -22,6 +23,7 @@
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.7",
     "@types/hpp": "^0.2.6",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/lodash": "^4.17.4",
     "@types/mongoose": "^5.11.97",
     "@types/validator": "^13.11.9",
@@ -39,6 +41,7 @@
     "helmet": "^7.1.0",
     "hpp": "^0.2.3",
     "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^8.3.2",
     "slugify": "^1.6.6",
