@@ -4,6 +4,7 @@ import userModel, { type UserType } from "../models/user.model";
 import AppError from "../utils/error-handlers/app-error";
 import catchAsync from "../utils/error-handlers/catch-async-error";
 import { createResetPasswordOTP, isCorrectPassword } from "../utils/functions";
+import Email from "../utils/email";
 
 const signToken = (id: string) =>
   jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -36,6 +37,11 @@ export const signup = catchAsync(
       password: req.body.password,
     });
 
+    new Email({
+      user: { email: newUser.email, displayname: newUser.displayname },
+      url: `${req.originalUrl}/${newUser.displayname}`,
+    }).sendWelcome();
+
     createSendToken(newUser, 201, res);
   }
 );
@@ -65,42 +71,39 @@ export const forgotPassword = catchAsync(
     if (!user)
       return next(new AppError("Account with email does not exist", 404));
 
-    // try {
-    // @ts-ignore
-    const otp = createResetPasswordOTP();
+    try {
+      // @ts-ignore
+      const otp = createResetPasswordOTP();
 
-    //   if (process.env.NODE_ENV === "production") {
-    //     resetURL = `${process.env.PROD_FRONTEND_URL}/reset-password/?token=${resetToken}`;
-    //   } else {
-    //     resetURL = `${process.env.DEV_FRONTEND_URL}/reset-password/?token=${resetToken}`;
-    //   }
+      new Email({
+        user: { email: user.email, displayname: user.displayname },
+        otp,
+      }).sendResetPasswordOTP();
 
-    //   new Email(user, resetURL).sendPasswordReset();
+      user.password_reset_token = otp;
+      user.password_reset_token_expires = Date.now() + 10 * 60 * 1000; // 10mins expiry date;
 
-    user.password_reset_token = otp;
-    user.password_reset_token_expires = Date.now() + 10 * 60 * 1000; // 10mins expiry date;
+      await user.save({ validateBeforeSave: false });
 
-    await user.save({ validateBeforeSave: false });
+      res.status(200).json({
+        status: "success",
+        message: "OTP has been sent to email",
+        data: { otp },
+      });
+    } catch (err) {
+      user.password_reset_token = undefined;
+      user.password_reset_token_expires = undefined;
 
-    res.status(200).json({
-      status: "success",
-      message: "OTP has been sent to email",
-      data: { otp },
-    });
-    // } catch (err) {
-    //   user.password_reset_token = undefined;
-    //   user.password_reset_token_expires = undefined;
+      await user.save({ validateBeforeSave: false });
 
-    //   await user.save({ validateBeforeSave: false });
-
-    //   console.log(err);
-    //   return next(
-    //     new AppError(
-    //       "There was an error sending the email. Try again later",
-    //       500
-    //     )
-    //   );
-    // }
+      console.log(err);
+      return next(
+        new AppError(
+          "There was an error sending the email. Try again later",
+          500
+        )
+      );
+    }
   }
 );
 
