@@ -52,7 +52,7 @@ export const login = catchAsync(
     if (!user || !(await isCorrectPassword(req.body.password, user.password)))
       return next(new AppError("Incorrect email or password", 401));
 
-    createSendToken(user, 200, res);
+    createSendToken(user, 201, res);
   }
 );
 
@@ -133,7 +133,7 @@ export const updatePassword = catchAsync(
     const { currentPassword, newPassword } = req.body;
 
     const user = await userModel
-      .findById((req as any).user.id)
+      .findById((req as any).identity._id)
       .select("+password");
 
     if (!user) return next(new AppError("This user does not exist", 404));
