@@ -15,8 +15,7 @@ const tweetSchema = new mongoose.Schema(
         message: "{PATH} exceeds the limit of 4",
       },
     },
-
-    user_id: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
       required: [true, "Please provide a user id"],
