@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import crypto from "crypto";
 import mongoose from "mongoose";
 import validator from "validator";
 
@@ -29,7 +28,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Please provide a password"],
-      minLength: 8,
+      minLength: 6,
       select: false,
     },
     is_email_verfied: {
@@ -38,7 +37,7 @@ const userSchema = new mongoose.Schema(
     },
     password_changed_at: Date,
     password_reset_token: String,
-    password_reset_token_expires: String,
+    password_reset_token_expires: Number,
     isActive: {
       type: Boolean,
       default: true,
@@ -79,19 +78,6 @@ userSchema.methods.hasChangedPasswordAfter = function (jwt_timestamp: number) {
   }
 
   return false;
-};
-
-userSchema.methods.createPasswordResetToken = function () {
-  const resetToken = crypto.randomBytes(32).toString("hex");
-
-  this.password_reset_token = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
-
-  this.password_reset_token_expires = Date.now() + 10 * 60 * 1000; // 10mins expiry date
-
-  return resetToken;
 };
 
 export type UserType = mongoose.InferSchemaType<typeof userSchema>;
