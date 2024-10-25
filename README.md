@@ -1,4 +1,4 @@
-# social media backend api (case study:twitter)
+# social media backend api (case study: X fka twitter)
 
 To install dependencies:
 
