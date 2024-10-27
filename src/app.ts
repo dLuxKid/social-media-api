@@ -41,7 +41,7 @@ app.use(hpp());
 app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Hello from the server side");
 });
-app.use("/", router());
+app.use("/api/v1", router());
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 500));
 });

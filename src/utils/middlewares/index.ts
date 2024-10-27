@@ -21,6 +21,7 @@ export const protectRoute = catchAsync(
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
     ) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
     if (!token) {
@@ -30,7 +31,8 @@ export const protectRoute = catchAsync(
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-    const currentUser = await userModel.findById({ _id: decoded.id });
+
+    const currentUser = await userModel.findById(decoded.id);
 
     if (!currentUser) {
       return next(
@@ -59,6 +61,7 @@ export const isAuthenticated = catchAsync(
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
     ) {
+      token = req.headers.authorization.split(" ")[1];
     }
 
     if (!token) return next();
