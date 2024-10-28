@@ -1,4 +1,4 @@
-# twitter-clone-be
+# social media backend api (case study: X fka twitter)
 
 To install dependencies:
 
