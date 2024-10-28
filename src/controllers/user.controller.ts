@@ -16,9 +16,9 @@ export const getUser = catchAsync(
 
 export const getProfile = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const user_id = req.params.user_id;
+    const username = req.params.username;
 
-    const user = await userModel.findById(user_id);
+    const user = await userModel.findOne({ username });
 
     res.status(200).json({
       status: "success",
