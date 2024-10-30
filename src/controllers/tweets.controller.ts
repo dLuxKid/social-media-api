@@ -36,7 +36,7 @@ export const createTweet = catchAsync(
 
     const tweet = await tweetModel.create({
       text: req.body.text,
-      media: req.body.media || undefined,
+      media: req.body.media,
       user,
     });
 

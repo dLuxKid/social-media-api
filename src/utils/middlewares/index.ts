@@ -3,8 +3,9 @@ import jwt from "jsonwebtoken";
 import { merge } from "lodash";
 import userModel from "../../models/user.model";
 import AppError from "../error-handlers/app-error";
-import { hasChangedPasswordAfter } from "../functions";
 import catchAsync from "../error-handlers/catch-async-error";
+import { hasChangedPasswordAfter } from "../functions";
+import { uploadMedia } from "../upload-image";
 
 interface JwtPayload {
   id: string;
@@ -79,5 +80,21 @@ export const isAuthenticated = catchAsync(
     } catch (err) {
       return next();
     }
+  }
+);
+
+export const handleMediaUpload = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (req.body.media) {
+      const uploadedMedia: any[] = await Promise.all(
+        req.body.media.map(
+          async (mediaUrl: string) => await uploadMedia(mediaUrl)
+        )
+      );
+
+      req.body.media = uploadedMedia;
+    }
+
+    next();
   }
 );
