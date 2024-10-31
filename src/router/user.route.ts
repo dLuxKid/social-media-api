@@ -5,11 +5,15 @@ import {
   getUser,
   updateUser,
 } from "../controllers/user.controller";
-import { isAuthenticated, protectRoute } from "../utils/middlewares";
+import {
+  handleMediaUpload,
+  isAuthenticated,
+  protectRoute,
+} from "../utils/middlewares";
 
 export default (router: Router) => {
   router.get("/user/get-user", isAuthenticated, getUser);
   router.get("/user/get-profile/:username", getProfile);
-  router.put("/user/update-user", protectRoute, updateUser);
+  router.put("/user/update-user", protectRoute, handleMediaUpload, updateUser);
   router.put("/user/delete-user", protectRoute, deleteUser);
 };

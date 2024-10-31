@@ -85,7 +85,16 @@ export const isAuthenticated = catchAsync(
 
 export const handleMediaUpload = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    if (req.body.media) {
+    if (req.body.banner_picture || req.body.profile_picture) {
+      const bannerPictureUrl = req.body.banner_picture
+        ? await uploadMedia(req.body.banner_picture)
+        : undefined;
+      const profilePictureUrl = req.body.profile_picture
+        ? await uploadMedia(req.body.profile_picture)
+        : undefined;
+      req.body.banner_picture = bannerPictureUrl;
+      req.body.profile_picture = profilePictureUrl;
+    } else if (req.body.media) {
       const uploadedMedia: any[] = await Promise.all(
         req.body.media.map(
           async (mediaUrl: string) => await uploadMedia(mediaUrl)
