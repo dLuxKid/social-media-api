@@ -1,18 +1,22 @@
 import express, { Router } from "express";
-import authenticationRouter from "./authentication.route";
-import userRouter from "./user.route";
-import tweetRouter from "./tweet.route";
+import authenticationRoute from "./authentication.route";
+import followRoute from "./follow.route";
 import likeRoute from "./like.route";
 import replyRoute from "./reply.route";
+import tweetRouter from "./tweet.route";
+import userRoute from "./user.route";
+import notificationRoute from "./notification.route";
 
 const router = express.Router();
 
 export default (): Router => {
-  userRouter(router);
-  authenticationRouter(router);
+  userRoute(router);
+  authenticationRoute(router);
   tweetRouter(router);
   likeRoute(router);
   replyRoute(router);
+  followRoute(router);
+  notificationRoute(router);
 
   return router;
 };

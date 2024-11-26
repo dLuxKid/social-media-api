@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
-const followsSchema = new mongoose.Schema(
+const followSchema = new mongoose.Schema(
   {
-    followed_by_id: {
+    followed_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
       required: [true, "Please provide a user id"],
     },
-    followed_id: {
+    followed: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
       required: [true, "Please provide the user id"],
@@ -16,4 +16,4 @@ const followsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Follows", followsSchema);
+export default mongoose.model("Follow", followSchema);
