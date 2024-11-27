@@ -17,6 +17,5 @@ export default (): Router => {
   replyRoute(router);
   followRoute(router);
   notificationRoute(router);
-
   return router;
 };
