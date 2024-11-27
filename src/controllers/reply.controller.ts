@@ -49,9 +49,28 @@ export const deleteReply = catchAsync(
 
     const user_id = (req as any).identity.id;
 
+    const reply = await replyModel.findById(reply_id);
+
+    if (!reply) {
+      res.status(404).json({
+        status: "fail",
+        message: "Reply not found",
+      });
+
+      return;
+    }
+
+    if (reply.user_id.toString() !== user_id) {
+      res.status(403).json({
+        status: "fail",
+        message: "Unauthorized to delete this reply",
+      });
+
+      return;
+    }
+
     await replyModel.deleteOne({
       _id: reply_id,
-      user_id,
     });
 
     res.status(201).json({
