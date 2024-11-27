@@ -46,10 +46,10 @@ export const readNotification = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    const receiever_id = (req as any).identity.id;
+    const receiver_id = (req as any).identity.id;
 
     await notificationModel.updateOne(
-      { _id: id, receiever_id },
+      { _id: id, receiver_id },
       { $set: { read: true } }
     );
 

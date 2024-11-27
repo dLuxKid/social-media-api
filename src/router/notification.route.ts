@@ -18,7 +18,7 @@ export default (router: Router) => {
     createNotification
   );
   router.patch(
-    "/notification/read-notification",
+    "/notification/read-notification/:id",
     protectRoute,
     readNotification
   );
