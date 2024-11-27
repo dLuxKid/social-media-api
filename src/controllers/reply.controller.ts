@@ -56,7 +56,7 @@ export const deleteReply = catchAsync(
       return next(new AppError("Reply not found", 404));
     }
 
-    if (reply.user_id !== user_id) {
+    if (reply.user_id.toString() !== user_id) {
       return next(new AppError("Cannot delete another user reply", 404));
     }
 
