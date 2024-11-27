@@ -7,6 +7,18 @@ export const likeTweet = catchAsync(
     const { tweet_id } = req.body;
     const user_id = (req as any).identity.id;
 
+    const existingLike = await likesModel.findOne({
+      tweet_id,
+      user_id,
+    });
+
+    if (existingLike) {
+      res.status(409).json({
+        status: "error",
+        message: "User has already liked this tweet",
+      });
+    }
+
     await likesModel.create({
       tweet_id,
       user_id,
