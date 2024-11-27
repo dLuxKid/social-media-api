@@ -12,17 +12,11 @@ export const likeTweet = catchAsync(
       user_id,
     });
 
-    if (existingLike) {
-      res.status(409).json({
-        status: "error",
-        message: "User has already liked this tweet",
+    if (!existingLike)
+      await likesModel.create({
+        tweet_id,
+        user_id,
       });
-    }
-
-    await likesModel.create({
-      tweet_id,
-      user_id,
-    });
 
     res.status(201).json({
       status: "success",
@@ -36,10 +30,16 @@ export const unlikeTweet = catchAsync(
     const { tweet_id } = req.body;
     const user_id = (req as any).identity.id;
 
-    await likesModel.deleteOne({
+    const existingLike = await likesModel.findOne({
       tweet_id,
       user_id,
     });
+
+    if (existingLike)
+      await likesModel.deleteOne({
+        tweet_id,
+        user_id,
+      });
 
     res.status(201).json({
       status: "success",
