@@ -25,11 +25,14 @@ export const getAllNotifications = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const receiever_id = (req as any).identity.id;
 
-    if (!receiever_id)
+    if (!receiever_id) {
       res.status(201).json({
         status: "success",
         data: null,
       });
+
+      return;
+    }
 
     const notifications = await notificationModel.find({
       receiever_id,

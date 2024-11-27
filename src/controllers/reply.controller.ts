@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import catchAsync from "../utils/error-handlers/catch-async-error";
 import replyModel from "../models/reply.model";
+import AppError from "../utils/error-handlers/app-error";
 
 export const replyTweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -52,21 +53,11 @@ export const deleteReply = catchAsync(
     const reply = await replyModel.findById(reply_id);
 
     if (!reply) {
-      res.status(404).json({
-        status: "fail",
-        message: "Reply not found",
-      });
-
-      return;
+      return next(new AppError("Reply not found", 404));
     }
 
-    if (reply.user_id.toString() !== user_id) {
-      res.status(403).json({
-        status: "fail",
-        message: "Unauthorized to delete this reply",
-      });
-
-      return;
+    if (reply.user_id !== user_id) {
+      return next(new AppError("Cannot delete another user reply", 404));
     }
 
     await replyModel.deleteOne({
