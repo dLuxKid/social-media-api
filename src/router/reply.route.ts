@@ -9,5 +9,5 @@ import {
 export default (router: Router) => {
   router.post("/reply/reply-tweet", protectRoute, replyTweet);
   router.post("/reply/reply-reply", protectRoute, replyReply);
-  router.delete("reply/delete-reply/:reply_id", protectRoute, deleteReply);
+  router.delete("/reply/delete-reply/:reply_id", protectRoute, deleteReply);
 };
