@@ -4,12 +4,12 @@ import notificationModel from "../models/notification.model";
 
 export const createNotification = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { receiever_id, type } = req.body;
+    const { receiver_id, type } = req.body;
 
     const sender_id = (req as any).identity.id;
 
     await notificationModel.create({
-      receiever_id,
+      receiver_id,
       sender_id,
       type,
     });

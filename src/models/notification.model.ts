@@ -7,7 +7,7 @@ const notificationModel = new mongoose.Schema(
       ref: "Users",
       required: [true, "Please provide a user id"],
     },
-    receiever_id: {
+    receiver_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
       required: [true, "Please provide a user id"],
