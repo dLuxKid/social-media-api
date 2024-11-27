@@ -72,7 +72,6 @@ export const forgotPassword = catchAsync(
       return next(new AppError("Account with email does not exist", 404));
 
     try {
-      // @ts-ignore
       const otp = createResetPasswordOTP();
 
       new Email({
