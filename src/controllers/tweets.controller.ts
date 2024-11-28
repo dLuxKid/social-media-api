@@ -1,3 +1,4 @@
+import { ObjectId } from "bson";
 import type { NextFunction, Request, Response } from "express";
 import tweetModel from "../models/tweet.model";
 import AppError from "../utils/error-handlers/app-error";
@@ -6,18 +7,12 @@ import catchAsync from "../utils/error-handlers/catch-async-error";
 export const getTweets = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = (req as any).identity.id;
-    // const tweets = await tweetModel
-    //   .find()
-    //   .sort({ createdAt: -1 })
-    //   .populate("user", "username displayname profile_picture");
 
     const tweets = await tweetModel.aggregate([
       // Match all tweets (adjust match stage if filtering is needed)
       { $match: {} },
-
       // Sort tweets by creation date (descending)
       { $sort: { createdAt: -1 } },
-
       // Lookup user details for each tweet
       {
         $lookup: {
@@ -27,22 +22,20 @@ export const getTweets = catchAsync(
           as: "user",
         },
       },
-
       // Unwind the user details array (optional, depending on how you want the data)
       { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
-
       // Lookup likes for the logged-in user on the tweets
       {
         $lookup: {
-          from: "likes", // The collection name for likes
-          let: { current_tweet_id: "$_id" },
+          from: "likes", // Collection for likes
+          let: { tweetId: "$_id" },
           pipeline: [
             {
               $match: {
                 $expr: {
                   $and: [
-                    { $eq: ["$tweet_id", "$$current_tweet_id"] },
-                    { $eq: ["$user_id", user_id] },
+                    { $eq: ["$tweet_id", "$$tweetId"] }, // Match tweet_id with current tweet
+                    { $eq: ["$user_id", new ObjectId(user_id)] }, // Match user_id with logged-in user
                   ],
                 },
               },
@@ -51,14 +44,12 @@ export const getTweets = catchAsync(
           as: "likesByUser",
         },
       },
-
       // Add a field to indicate whether the logged-in user has liked the tweet
       {
         $addFields: {
           hasLiked: { $gt: [{ $size: "$likesByUser" }, 0] },
         },
       },
-
       // Project the required fields for the response
       {
         $project: {
