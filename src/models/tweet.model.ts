@@ -20,6 +20,9 @@ const tweetSchema = new mongoose.Schema(
       ref: "Users",
       required: [true, "Please provide a user id"],
     },
+    likes_count: Number,
+    replies_count: Number,
+    repost_count: Number,
   },
   { timestamps: true }
 );

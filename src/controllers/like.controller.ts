@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import likesModel from "../models/likes.model";
 import catchAsync from "../utils/error-handlers/catch-async-error";
+import tweetModel from "../models/tweet.model";
 
 export const likeTweet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -13,10 +14,15 @@ export const likeTweet = catchAsync(
     });
 
     if (!existingLike)
-      await likesModel.create({
-        tweet_id,
-        user_id,
-      });
+      await Promise.all([
+        likesModel.create({
+          tweet_id,
+          user_id,
+        }),
+        tweetModel.findByIdAndUpdate(tweet_id, {
+          $inc: { likes_count: 1 },
+        }),
+      ]);
 
     res.status(201).json({
       status: "success",
@@ -36,10 +42,15 @@ export const unlikeTweet = catchAsync(
     });
 
     if (existingLike)
-      await likesModel.deleteOne({
-        tweet_id,
-        user_id,
-      });
+      await Promise.all([
+        likesModel.deleteOne({
+          tweet_id,
+          user_id,
+        }),
+        tweetModel.findByIdAndUpdate(tweet_id, {
+          $inc: { likes_count: -1 },
+        }),
+      ]);
 
     res.status(201).json({
       status: "success",

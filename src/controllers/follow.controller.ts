@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import catchAsync from "../utils/error-handlers/catch-async-error";
 import followModel from "../models/follow.model";
+import userModel from "../models/user.model";
+import catchAsync from "../utils/error-handlers/catch-async-error";
 
 export const followUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -8,10 +9,18 @@ export const followUser = catchAsync(
 
     const followed_by = (req as any).identity.id;
 
-    await followModel.create({
-      followed,
-      followed_by,
-    });
+    await Promise.all([
+      followModel.create({
+        followed,
+        followed_by,
+      }),
+      userModel.findByIdAndUpdate(followed, {
+        $push: { followers: followed_by },
+      }),
+      userModel.findByIdAndUpdate(followed_by, {
+        $push: { following: followed },
+      }),
+    ]);
 
     res.status(201).json({
       status: "success",
@@ -26,10 +35,18 @@ export const unFollowUser = catchAsync(
 
     const followed_by = (req as any).identity.id;
 
-    await followModel.deleteOne({
-      followed,
-      followed_by,
-    });
+    await Promise.all([
+      followModel.deleteOne({
+        followed,
+        followed_by,
+      }),
+      userModel.findByIdAndUpdate(followed, {
+        $pull: { followers: followed_by },
+      }),
+      userModel.findByIdAndUpdate(followed_by, {
+        $pull: { following: followed },
+      }),
+    ]);
 
     res.status(201).json({
       status: "success",

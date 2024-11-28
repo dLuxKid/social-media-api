@@ -29,6 +29,9 @@ const replySchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Replies",
     },
+    likes_count: Number,
+    replies_count: Number,
+    repost_count: Number,
   },
   { timestamps: true }
 );

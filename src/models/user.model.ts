@@ -30,6 +30,14 @@ const userSchema = new mongoose.Schema(
     occupation: String,
     profile_url: String,
     dob: Date,
+    followers: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      default: [],
+    },
+    following: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      default: [],
+    },
     password: {
       type: String,
       required: [true, "Please provide a password"],
