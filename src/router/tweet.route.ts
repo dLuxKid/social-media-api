@@ -4,6 +4,7 @@ import {
   deleteTweet,
   getTweet,
   getTweets,
+  getUsersTweet,
 } from "../controllers/tweets.controller";
 import {
   handleMediaUpload,
@@ -13,7 +14,8 @@ import {
 
 export default (router: Router) => {
   router.get("/tweet/get-tweets", isAuthenticated, getTweets);
-  router.get("/tweet/get-tweets/:tweet_id", getTweet);
+  router.get("/tweet/get-tweets/:username", isAuthenticated, getUsersTweet);
+  router.get("/tweet/get-tweet/:tweet_id", getTweet);
   router.post(
     "/tweet/create-tweet",
     protectRoute,
