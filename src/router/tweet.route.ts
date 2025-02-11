@@ -1,11 +1,11 @@
 import type { Router } from "express";
 import {
-  createTweet,
-  deleteTweet,
-  getTweet,
-  getTweets,
-  getUsersTweet,
-} from "../controllers/tweets.controller";
+  createPost,
+  deletePost,
+  getPost,
+  getPosts,
+  getUsersPost,
+} from "../controllers/posts.controller";
 import {
   handleMediaUpload,
   isAuthenticated,
@@ -13,14 +13,14 @@ import {
 } from "../utils/middlewares";
 
 export default (router: Router) => {
-  router.get("/tweet/get-tweets", isAuthenticated, getTweets);
-  router.get("/tweet/get-tweets/:username", isAuthenticated, getUsersTweet);
-  router.get("/tweet/get-tweet/:tweet_id", getTweet);
+  router.get("/post/get-posts", isAuthenticated, getPosts);
+  router.get("/post/get-posts/:username", isAuthenticated, getUsersPost);
+  router.get("/post/get-post/:post_id", getPost);
   router.post(
-    "/tweet/create-tweet",
+    "/post/create-post",
     protectRoute,
     handleMediaUpload,
-    createTweet
+    createPost
   );
-  router.delete("/tweet/delete-tweet/:tweet_id", protectRoute, deleteTweet);
+  router.delete("/post/delete-post/:post_id", protectRoute, deletePost);
 };
