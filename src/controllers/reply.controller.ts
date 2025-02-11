@@ -3,16 +3,16 @@ import catchAsync from "../utils/error-handlers/catch-async-error";
 import replyModel from "../models/reply.model";
 import AppError from "../utils/error-handlers/app-error";
 
-export const replyTweet = catchAsync(
+export const replyPost = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { text, media, tweet_id } = req.body;
+    const { text, media, post_id } = req.body;
 
     const user_id = (req as any).identity.id;
 
     await replyModel.create({
       text,
       media,
-      tweet_id,
+      post_id,
       user_id,
     });
 
@@ -25,14 +25,14 @@ export const replyTweet = catchAsync(
 
 export const replyReply = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { text, media, tweet_id, reply_id } = req.body;
+    const { text, media, post_id, reply_id } = req.body;
 
     const user_id = (req as any).identity.id;
 
     await replyModel.create({
       text,
       media,
-      tweet_id,
+      post_id,
       reply_id,
       user_id,
     });

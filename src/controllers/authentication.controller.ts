@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import userModel, { type UserType } from "../models/user.model";
+import userModel from "../models/user.model";
+import Email from "../utils/email";
 import AppError from "../utils/error-handlers/app-error";
 import catchAsync from "../utils/error-handlers/catch-async-error";
 import { createResetPasswordOTP, isCorrectPassword } from "../utils/functions";
-import Email from "../utils/email";
 
 const signToken = (id: string) =>
   jwt.sign({ id }, process.env.JWT_SECRET as string, {

@@ -16,11 +16,6 @@ export default (router: Router) => {
   router.get("/post/get-posts", isAuthenticated, getPosts);
   router.get("/post/get-posts/:username", isAuthenticated, getUsersPost);
   router.get("/post/get-post/:post_id", getPost);
-  router.post(
-    "/post/create-post",
-    protectRoute,
-    handleMediaUpload,
-    createPost
-  );
+  router.post("/post/create-post", protectRoute, handleMediaUpload, createPost);
   router.delete("/post/delete-post/:post_id", protectRoute, deletePost);
 };

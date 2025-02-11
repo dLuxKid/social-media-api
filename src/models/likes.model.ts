@@ -7,10 +7,10 @@ const likesSchema = new mongoose.Schema(
       ref: "Users",
       required: [true, "Please provide a user id"],
     },
-    tweet_id: {
+    post_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Tweets",
-      required: [true, "Please provide the tweet id"],
+      ref: "Posts",
+      required: [true, "Please provide the post id"],
     },
   },
   { timestamps: true }

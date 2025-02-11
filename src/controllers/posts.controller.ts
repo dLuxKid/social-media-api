@@ -1,21 +1,21 @@
 import { ObjectId } from "bson";
 import type { NextFunction, Request, Response } from "express";
-import tweetModel from "../models/tweet.model";
+import postModel from "../models/post.model";
 import AppError from "../utils/error-handlers/app-error";
 import catchAsync from "../utils/error-handlers/catch-async-error";
 
-export const getTweets = catchAsync(
+export const getPosts = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = (req as any).identity?.id;
 
     if (user_id) {
-      const tweets = await tweetModel.aggregate(
+      const posts = await postModel.aggregate(
         [
-          // Match all tweets (adjust match stage if filtering is needed)
+          // Match all posts (adjust match stage if filtering is needed)
           { $match: {} },
-          // Sort tweets by creation date (descending)
+          // Sort posts by creation date (descending)
           { $sort: { createdAt: -1 } },
-          // Lookup user details for each tweet
+          // Lookup user details for each post
           {
             $lookup: {
               from: "users", // The collection name for users
@@ -26,17 +26,17 @@ export const getTweets = catchAsync(
           },
           // Unwind the user details array (optional, depending on how you want the data)
           { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
-          // Lookup likes for the logged-in user on the tweets
+          // Lookup likes for the logged-in user on the posts
           {
             $lookup: {
               from: "likes", // Collection for likes
-              let: { tweetId: "$_id" },
+              let: { postId: "$_id" },
               pipeline: [
                 {
                   $match: {
                     $expr: {
                       $and: [
-                        { $eq: ["$tweet_id", "$$tweetId"] }, // Match tweet_id with current tweet
+                        { $eq: ["$post_id", "$$postId"] }, // Match post_id with current post
                         { $eq: ["$user_id", new ObjectId(user_id)] }, // Match user_id with logged-in user
                       ],
                     },
@@ -46,7 +46,7 @@ export const getTweets = catchAsync(
               as: "likesByUser",
             },
           },
-          // Add a field to indicate whether the logged-in user has liked the tweet
+          // Add a field to indicate whether the logged-in user has liked the post
           {
             $addFields: {
               hasLiked: { $gt: [{ $size: "$likesByUser" }, 0] },
@@ -74,16 +74,16 @@ export const getTweets = catchAsync(
 
       res.status(200).json({
         status: "success",
-        data: { tweets },
+        data: { posts },
       });
     } else {
-      const tweets = await tweetModel.aggregate(
+      const posts = await postModel.aggregate(
         [
-          // Match all tweets (adjust match stage if filtering is needed)
+          // Match all posts (adjust match stage if filtering is needed)
           { $match: {} },
-          // Sort tweets by creation date (descending)
+          // Sort posts by creation date (descending)
           { $sort: { createdAt: -1 } },
-          // Lookup user details for each tweet
+          // Lookup user details for each post
           {
             $lookup: {
               from: "users", // The collection name for users
@@ -95,7 +95,7 @@ export const getTweets = catchAsync(
           // Unwind the user details array (optional, depending on how you want the data)
           { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
 
-          // Add a field to indicate whether the logged-in user has liked the tweet
+          // Add a field to indicate whether the logged-in user has liked the post
           {
             $addFields: {
               hasLiked: false,
@@ -123,22 +123,22 @@ export const getTweets = catchAsync(
 
       res.status(200).json({
         status: "success",
-        data: { tweets },
+        data: { posts },
       });
     }
   }
 );
 
-export const getUsersTweet = catchAsync(
+export const getUsersPost = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user_id = (req as any).identity?.id;
 
     const { username } = req.params;
 
     if (user_id) {
-      const tweets = await tweetModel.aggregate(
+      const posts = await postModel.aggregate(
         [
-          // Lookup user details for each tweet
+          // Lookup user details for each post
           {
             $lookup: {
               from: "users", // The collection name for users
@@ -149,21 +149,21 @@ export const getUsersTweet = catchAsync(
           },
           // Unwind the user details array (optional, depending on how you want the data)
           { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
-          // Match all tweets (adjust match stage if filtering is needed)
+          // Match all posts (adjust match stage if filtering is needed)
           { $match: { "user.username": username } },
-          // Sort tweets by creation date (descending)
+          // Sort posts by creation date (descending)
           // { $sort: { createdAt: -1 } },
-          // Lookup likes for the logged-in user on the tweets
+          // Lookup likes for the logged-in user on the posts
           {
             $lookup: {
               from: "likes", // Collection for likes
-              let: { tweetId: "$_id" },
+              let: { postId: "$_id" },
               pipeline: [
                 {
                   $match: {
                     $expr: {
                       $and: [
-                        { $eq: ["$tweet_id", "$$tweetId"] }, // Match tweet_id with current tweet
+                        { $eq: ["$post_id", "$$postId"] }, // Match post_id with current post
                         { $eq: ["$user_id", user_id] }, // Match user_id with logged-in user
                       ],
                     },
@@ -173,7 +173,7 @@ export const getUsersTweet = catchAsync(
               as: "likesByUser",
             },
           },
-          // Add a field to indicate whether the logged-in user has liked the tweet
+          // Add a field to indicate whether the logged-in user has liked the post
           {
             $addFields: {
               hasLiked: { $gt: [{ $size: "$likesByUser" }, 0] },
@@ -201,12 +201,12 @@ export const getUsersTweet = catchAsync(
 
       res.status(200).json({
         status: "success",
-        data: { tweets },
+        data: { posts },
       });
     } else {
-      const tweets = await tweetModel.aggregate(
+      const posts = await postModel.aggregate(
         [
-          // Lookup user details for each tweet
+          // Lookup user details for each post
           {
             $lookup: {
               from: "users", // The collection name for users
@@ -217,11 +217,11 @@ export const getUsersTweet = catchAsync(
           },
           // Unwind the user details array (optional, depending on how you want the data)
           { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
-          // Match all tweets (adjust match stage if filtering is needed)
+          // Match all posts (adjust match stage if filtering is needed)
           { $match: { "user.username": username } },
-          // Sort tweets by creation date (descending)
+          // Sort posts by creation date (descending)
           { $sort: { createdAt: -1 } },
-          // Add a field to indicate whether the logged-in user has liked the tweet
+          // Add a field to indicate whether the logged-in user has liked the post
           {
             $addFields: {
               hasLiked: false,
@@ -249,30 +249,30 @@ export const getUsersTweet = catchAsync(
 
       res.status(200).json({
         status: "success",
-        data: { tweets },
+        data: { posts },
       });
     }
   }
 );
 
-export const getTweet = catchAsync(
+export const getPost = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const tweet = await tweetModel
-      .findById(req.params.tweet_id)
+    const post = await postModel
+      .findById(req.params.post_id)
       .populate("user", "username displayname profile_picture");
 
     res.status(200).json({
       status: "success",
-      data: { tweet },
+      data: { post },
     });
   }
 );
 
-export const createTweet = catchAsync(
+export const createPost = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).identity.id;
 
-    const tweet = await tweetModel.create({
+    const post = await postModel.create({
       text: req.body.text,
       media: req.body.media,
       user,
@@ -280,21 +280,21 @@ export const createTweet = catchAsync(
 
     res.status(200).json({
       status: "success",
-      data: { tweet },
+      data: { post },
     });
   }
 );
 
-export const deleteTweet = catchAsync(
+export const deletePost = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).identity.id;
 
-    const tweet = await tweetModel.findById(req.params.tweet_id);
+    const post = await postModel.findById(req.params.post_id);
 
-    if (!(tweet?.user !== user.id))
-      return next(new AppError("Cannot delete another user tweet", 404));
+    if (!(post?.user !== user.id))
+      return next(new AppError("Cannot delete another user post", 404));
 
-    await tweetModel.findByIdAndDelete(req.params.tweet_id);
+    await postModel.findByIdAndDelete(req.params.post_id);
 
     res.status(202).json({
       status: "success",

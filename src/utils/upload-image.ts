@@ -3,9 +3,9 @@ import AppError from "./error-handlers/app-error";
 
 cloudinary.config({
   secure: false,
-  cloud_name: "digw06vyy",
-  api_key: "474542831494846",
-  api_secret: "x7c9Wqro9egQcAAxG7GO83Qe3ow",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const options = {
