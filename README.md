@@ -19,14 +19,14 @@ A RESTful API for a social media platform that enables user authentication, cont
 ### Content Management
 
 - Create posts with text and media support
-- View individual and aggregated tweets
-- Delete own tweets
+- View individual and aggregated posts
+- Delete own posts
 
 ### Social Interactions
 
 - Follow/unfollow other users
-- Like/unlike tweets
-- Reply to tweets and comments
+- Like/unlike posts
+- Reply to posts and comments
 - Nested reply functionality
 
 ### Notifications
@@ -56,20 +56,20 @@ PUT    /user/update-user      - Update user profile
 PUT    /user/delete-user      - Delete account
 ```
 
-### Tweet Routes
+### Post Routes
 
 ```
-GET    /tweet/get-tweets      - Get timeline tweets
-GET    /tweet/get-tweets/:username  - Get user's tweets
-GET    /tweet/get-tweet/:tweet_id   - Get single tweet
-POST   /tweet/create-tweet    - Create new tweet
-DELETE /tweet/delete-tweet/:tweet_id - Delete tweet
+GET    /post/get-posts      - Get timeline posts
+GET    /post/get-posts/:username  - Get user's posts
+GET    /post/get-post/:post_id   - Get single post
+POST   /post/create-post    - Create new post
+DELETE /post/delete-post/:post_id - Delete post
 ```
 
 ### Reply Routes
 
 ```
-POST   /reply/reply-tweet     - Reply to a tweet
+POST   /reply/reply-post     - Reply to a post
 POST   /reply/reply-reply     - Reply to a reply
 DELETE /reply/delete-reply/:reply_id - Delete reply
 ```
@@ -77,8 +77,8 @@ DELETE /reply/delete-reply/:reply_id - Delete reply
 ### Like Routes
 
 ```
-POST   /like/like-tweet       - Like a tweet
-DELETE /like/unlike-tweet     - Unlike a tweet
+POST   /like/like-post       - Like a post
+DELETE /like/unlike-post     - Unlike a post
 ```
 
 ### Follow Routes
@@ -109,7 +109,7 @@ The API uses token-based authentication. Protected routes require a valid authen
 The API supports media uploads for:
 
 - Profile pictures
-- Tweet attachments
+- Post attachments
 - Handled through the `handleMediaUpload` middleware
 
 ## Security Features
